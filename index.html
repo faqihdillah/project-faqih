@@ -3,7 +3,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Flappy Naifa 🎀</title>
 
 <style>
@@ -22,34 +22,34 @@ body {
     justify-content: center;
     overflow: hidden;
     color: #d94d91;
+    touch-action: manipulation;
 }
 
 .game-container {
-    width: min(95vw, 480px);
+    width: min(95vw, 420px);
     text-align: center;
-    position: relative;
 }
 
 h1 {
-    font-size: 35px;
+    font-size: 32px;
     color: #ec5ca5;
     text-shadow: 2px 3px white;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
 .subtitle {
     color: #d85b9a;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     font-size: 13px;
 }
 
 .game-box {
     position: relative;
     width: 100%;
-    border: 7px solid white;
-    border-radius: 23px;
+    border: 6px solid white;
+    border-radius: 22px;
     overflow: hidden;
-    box-shadow: 0 10px 30px #d45c9650;
+    box-shadow: 0 10px 25px #d45c9640;
     background: #ffb9db;
 }
 
@@ -65,76 +65,76 @@ canvas {
     position: absolute;
     top: 12px;
     width: 100%;
-    z-index: 3;
-    pointer-events: none;
     display: flex;
     justify-content: space-around;
+    z-index: 3;
+    pointer-events: none;
 }
 
 .score-item {
-    background: #ffffffd9;
-    padding: 7px 15px;
+    background: #ffffffdf;
+    padding: 7px 14px;
     border-radius: 15px;
     font-weight: bold;
     color: #e44e9c;
-    box-shadow: 0 3px 8px #d45c9630;
+    font-size: 13px;
 }
 
 .overlay {
     position: absolute;
     inset: 0;
-    background: #ffb5d9b9;
+    background: #ffb5d9c9;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 5;
-    padding: 15px;
+    padding: 12px;
 }
 
 .panel {
     background: #fff8fc;
-    width: 90%;
-    padding: 22px 15px;
-    border-radius: 25px;
+    width: 92%;
+    padding: 20px 12px;
+    border-radius: 23px;
     box-shadow: 0 8px 25px #c64b8735;
 }
 
 .panel h2 {
-    font-size: 27px;
+    font-size: 24px;
     color: #ed65a9;
     margin-bottom: 8px;
 }
 
 .panel p {
-    font-size: 13px;
+    font-size: 12px;
     margin: 8px 0;
     color: #b54c81;
 }
 
 button, select {
     border: none;
-    padding: 11px 16px;
-    margin: 5px;
+    padding: 10px 14px;
+    margin: 4px;
     border-radius: 20px;
     background: #f47eb8;
     color: white;
     font-weight: bold;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 12px;
     box-shadow: 0 3px 0 #d65396;
+    touch-action: manipulation;
 }
 
 button:active {
-    transform: translateY(3px);
-    box-shadow: none;
+    transform: translateY(2px);
 }
 
-button.secondary {
+.secondary {
     background: #bda2ed;
     box-shadow: 0 3px 0 #9272c8;
 }
 
-button.light {
+.light {
     background: #ffcee5;
     color: #c34885;
     box-shadow: 0 3px 0 #e9a4c6;
@@ -148,7 +148,7 @@ select {
 }
 
 .selection {
-    margin: 12px 0;
+    margin: 10px 0;
 }
 
 .selection label {
@@ -162,20 +162,16 @@ select {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    margin-top: 10px;
+    margin-top: 9px;
 }
 
 .hidden {
     display: none !important;
 }
 
-#pauseScreen {
-    background: #ffb5d9c9;
-}
-
 .footer {
-    font-size: 11px;
-    margin-top: 10px;
+    font-size: 10px;
+    margin-top: 8px;
     color: #c14c85;
 }
 </style>
@@ -185,103 +181,92 @@ select {
 
 <div class="game-container">
 
-    <h1>🎀 FLAPPY NAIFA 🎀</h1>
-    <div class="subtitle">Fly high, little princess! 🌈</div>
+<h1>🎀 FLAPPY NAIFA 🎀</h1>
+<div class="subtitle">Fly high, little princess! 🌈</div>
 
-    <div class="game-box">
+<div class="game-box">
 
-        <canvas id="game" width="400" height="600"></canvas>
+<canvas id="game" width="400" height="600"></canvas>
 
-        <div class="score-board">
-            <div class="score-item">
-                SCORE: <span id="score">0</span>
-            </div>
-            <div class="score-item">
-                BEST: <span id="best">0</span>
-            </div>
-        </div>
-
-        <!-- MENU -->
-        <div class="overlay" id="menuScreen">
-            <div class="panel">
-                <h2>🌸 Welcome Naifa! 🌸</h2>
-                <p>Help your cute bird fly through the pink pipes!</p>
-
-                <div class="selection">
-                    <label>🐦 PILIH WARNA BURUNG</label>
-                    <select id="birdChoice">
-                        <option value="#ff72b6">Pink Princess</option>
-                        <option value="#fff0a6">Yellow Star</option>
-                        <option value="#b9a0ff">Purple Dream</option>
-                        <option value="#a3e8ff">Blue Sky</option>
-                    </select>
-                </div>
-
-                <div class="selection">
-                    <label>🎀 PILIH TOPI</label>
-                    <select id="hatChoice">
-                        <option value="bow">Pink Bow</option>
-                        <option value="crown">Pink Crown</option>
-                        <option value="flower">Pink Flower</option>
-                        <option value="none">Tanpa Topi</option>
-                    </select>
-                </div>
-
-                <button onclick="startGame()">▶ START GAME</button>
-                <button class="secondary" onclick="toggleMusic()">
-                    ♫ MUSIC ON/OFF
-                </button>
-
-                <p>Tekan SPASI atau sentuh layar untuk terbang!</p>
-            </div>
-        </div>
-
-        <!-- PAUSE -->
-        <div class="overlay hidden" id="pauseScreen">
-            <div class="panel">
-                <h2>⏸ GAME PAUSED</h2>
-                <p>Istirahat sebentar, Naifa!</p>
-                <button onclick="resumeGame()">▶ RESUME</button>
-                <button class="light" onclick="restartGame()">↻ RESTART</button>
-            </div>
-        </div>
-
-        <!-- GAME OVER -->
-        <div class="overlay hidden" id="overScreen">
-            <div class="panel">
-                <h2>💗 GAME OVER 💗</h2>
-                <p>Ups! Burung Naifa menabrak sesuatu!</p>
-                <h2 id="finalScore">0</h2>
-                <p>YOUR SCORE</p>
-                <p>🏆 HIGH SCORE: <span id="finalBest">0</span></p>
-                <button onclick="restartGame()">↻ PLAY AGAIN</button>
-                <button class="light" onclick="backToMenu()">MENU</button>
-            </div>
-        </div>
-
+<div class="score-board">
+    <div class="score-item">
+        SCORE: <span id="score">0</span>
     </div>
-
-    <div class="controls">
-        <button onclick="pauseGame()" id="pauseBtn" class="secondary">
-            ⏸ PAUSE
-        </button>
-        <button onclick="toggleMusic()" class="light">
-            ♫ SOUND
-        </button>
-        <button onclick="restartGame()" class="light">
-            ↻ RESTART
-        </button>
+    <div class="score-item">
+        BEST: <span id="best">0</span>
     </div>
+</div>
 
-    <div class="footer">
-        Made with 💗 for Naifa | Flappy Naifa 2026
+<!-- MENU -->
+<div class="overlay" id="menuScreen">
+    <div class="panel">
+        <h2>🌸 Welcome Naifa! 🌸</h2>
+        <p>Bantu burung kecil melewati pipa pink!</p>
+
+        <div class="selection">
+            <label>🐦 PILIH WARNA BURUNG</label>
+            <select id="birdChoice">
+                <option value="#ff72b6">Pink Princess</option>
+                <option value="#fff0a6">Yellow Star</option>
+                <option value="#b9a0ff">Purple Dream</option>
+                <option value="#a3e8ff">Blue Sky</option>
+            </select>
+        </div>
+
+        <div class="selection">
+            <label>🎀 PILIH TOPI</label>
+            <select id="hatChoice">
+                <option value="bow">Pink Bow</option>
+                <option value="crown">Pink Crown</option>
+                <option value="flower">Pink Flower</option>
+                <option value="none">Tanpa Topi</option>
+            </select>
+        </div>
+
+        <button onclick="startGame()">▶ START GAME</button>
+        <p>Tekan SPASI atau sentuh layar untuk terbang!</p>
     </div>
+</div>
+
+<!-- PAUSE -->
+<div class="overlay hidden" id="pauseScreen">
+    <div class="panel">
+        <h2>⏸ GAME PAUSED</h2>
+        <p>Istirahat sebentar, Naifa!</p>
+        <button onclick="resumeGame()">▶ RESUME</button>
+        <button class="light" onclick="restartGame()">↻ RESTART</button>
+    </div>
+</div>
+
+<!-- GAME OVER -->
+<div class="overlay hidden" id="overScreen">
+    <div class="panel">
+        <h2>💗 GAME OVER 💗</h2>
+        <p>Ups! Coba lagi ya!</p>
+        <h2 id="finalScore">0</h2>
+        <p>YOUR SCORE</p>
+        <p>🏆 HIGH SCORE: <span id="finalBest">0</span></p>
+        <button onclick="restartGame()">↻ PLAY AGAIN</button>
+        <button class="light" onclick="backToMenu()">MENU</button>
+    </div>
+</div>
+
+</div>
+
+<div class="controls">
+    <button onclick="pauseGame()" class="secondary">⏸ PAUSE</button>
+    <button onclick="restartGame()" class="light">↻ RESTART</button>
+</div>
+
+<div class="footer">
+Made with 💗 for Naifa | Flappy Naifa
+</div>
 
 </div>
 
 <script>
 const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d", { alpha: false });
 
 const W = 400;
 const H = 600;
@@ -298,26 +283,27 @@ let bird = {
     velocity: 0,
     gravity: 0.38,
     jump: -7.3,
-    size: 17,
     wing: 0
 };
 
 let pipes = [];
-let particles = [];
 let clouds = [];
+let stars = [];
 
 let pipeSpeed = 2.5;
 let gapSize = 165;
 let pipeWidth = 68;
+
 let frame = 0;
+let lastTime = 0;
+let accumulator = 0;
+
+const STEP = 1000 / 60;
 
 let birdColor = "#ff72b6";
 let hatType = "bow";
 
-// AUDIO
-
-
-// AUDIO FLAPPY NAIFA
+// AUDIO: HANYA SUARA LOMPAT
 let audioCtx = null;
 
 function initAudio() {
@@ -333,7 +319,6 @@ function initAudio() {
     }
 }
 
-// Hanya berbunyi saat burung melompat
 function flapSound() {
     if (!audioCtx) return;
 
@@ -341,6 +326,7 @@ function flapSound() {
     const gain = audioCtx.createGain();
 
     osc.type = "sine";
+
     osc.frequency.setValueAtTime(650, audioCtx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(
         420,
@@ -360,17 +346,24 @@ function flapSound() {
     osc.stop(audioCtx.currentTime + 0.09);
 }
 
-
 // BACKGROUND
-function createClouds() {
+function createBackground() {
     clouds = [];
+    stars = [];
 
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < 5; i++) {
         clouds.push({
             x: Math.random() * W,
-            y: 60 + Math.random() * 460,
-            size: 20 + Math.random() * 20,
-            speed: 0.3 + Math.random() * 0.4
+            y: 60 + Math.random() * 450,
+            size: 20 + Math.random() * 15,
+            speed: 0.3 + Math.random() * 0.3
+        });
+    }
+
+    for (let i = 0; i < 12; i++) {
+        stars.push({
+            x: Math.random() * W,
+            y: Math.random() * 550
         });
     }
 }
@@ -396,7 +389,7 @@ function drawRainbow() {
         "#c6a2ff"
     ];
 
-    ctx.lineWidth = 9;
+    ctx.lineWidth = 8;
 
     colors.forEach((color, i) => {
         ctx.strokeStyle = color;
@@ -407,7 +400,8 @@ function drawRainbow() {
 }
 
 function drawBackground() {
-    let gradient = ctx.createLinearGradient(0, 0, 0, H);
+    const gradient = ctx.createLinearGradient(0, 0, 0, H);
+
     gradient.addColorStop(0, "#ffb5dc");
     gradient.addColorStop(1, "#ffe5f2");
 
@@ -416,21 +410,18 @@ function drawBackground() {
 
     drawRainbow();
 
-    // Stars
-    for (let i = 0; i < 22; i++) {
-        let x = (i * 73 + frame * 0.15) % W;
-        let y = (i * 97) % 540;
+    ctx.fillStyle = "white";
+    ctx.font = "16px Arial";
 
-        ctx.fillStyle = "white";
-        ctx.font = "16px Arial";
-        ctx.globalAlpha = 0.6 + Math.sin(frame * 0.04 + i) * 0.3;
-        ctx.fillText("✦", x, y);
+    for (let i = 0; i < stars.length; i++) {
+        ctx.fillText("✦", stars[i].x, stars[i].y);
     }
 
-    ctx.globalAlpha = 1;
+    for (let i = 0; i < clouds.length; i++) {
+        const c = clouds[i];
 
-    clouds.forEach(c => {
         drawCloud(c.x, c.y, c.size);
+
         if (state === "playing") {
             c.x -= c.speed;
 
@@ -439,13 +430,13 @@ function drawBackground() {
                 c.y = 50 + Math.random() * 460;
             }
         }
-    });
+    }
 
-    // Ground
     ctx.fillStyle = "#ff9fc9";
     ctx.fillRect(0, 575, W, 25);
 
     ctx.fillStyle = "white";
+
     for (let x = 0; x < W; x += 28) {
         ctx.fillRect(x, 575, 14, 5);
     }
@@ -496,14 +487,17 @@ function drawHat(x, y) {
 
     if (hatType === "flower") {
         for (let i = 0; i < 5; i++) {
-            let a = i * Math.PI * 2 / 5;
+            const a = i * Math.PI * 2 / 5;
+
             ctx.fillStyle = "#ff70ad";
             ctx.beginPath();
+
             ctx.arc(
                 Math.cos(a) * 7,
                 -13 + Math.sin(a) * 7,
                 5, 0, Math.PI * 2
             );
+
             ctx.fill();
         }
 
@@ -517,13 +511,15 @@ function drawHat(x, y) {
 }
 
 function drawBird() {
-    let x = bird.x;
-    let y = bird.y;
-
     ctx.save();
-    ctx.translate(x, y);
 
-    let angle = Math.min(0.55, Math.max(-0.45, bird.velocity * 0.07));
+    ctx.translate(bird.x, bird.y);
+
+    const angle = Math.max(
+        -0.45,
+        Math.min(0.55, bird.velocity * 0.07)
+    );
+
     ctx.rotate(angle);
 
     // Body
@@ -532,15 +528,15 @@ function drawBird() {
     ctx.ellipse(0, 0, 20, 16, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Wing animation
-    let wingY = Math.sin(bird.wing) * 6;
+    // Wing
+    const wingY = Math.sin(bird.wing) * 5;
 
     ctx.fillStyle = "#ff9ac9";
     ctx.beginPath();
     ctx.ellipse(-6, wingY, 11, 7, -0.4, 0, Math.PI * 2);
     ctx.fill();
 
-    // Face
+    // Eye
     ctx.fillStyle = "white";
     ctx.beginPath();
     ctx.arc(11, -5, 6, 0, Math.PI * 2);
@@ -559,7 +555,7 @@ function drawBird() {
     ctx.lineTo(18, 7);
     ctx.fill();
 
-    // Cheeks
+    // Cheek
     ctx.fillStyle = "#ff80ad";
     ctx.beginPath();
     ctx.arc(12, 5, 3, 0, Math.PI * 2);
@@ -567,15 +563,12 @@ function drawBird() {
 
     ctx.restore();
 
-    drawHat(x, y - 9);
+    drawHat(bird.x, bird.y - 9);
 }
 
 // PIPES
 function createPipe() {
-    let min = 125;
-    let max = 425;
-
-    let gapY = min + Math.random() * (max - min);
+    const gapY = 125 + Math.random() * 300;
 
     pipes.push({
         x: W + 10,
@@ -585,11 +578,13 @@ function createPipe() {
 }
 
 function drawPipe(p) {
-    let topHeight = p.gapY - gapSize / 2;
-    let bottomY = p.gapY + gapSize / 2;
+    const topHeight = p.gapY - gapSize / 2;
+    const bottomY = p.gapY + gapSize / 2;
 
-    // Pipe gradient
-    let gradient = ctx.createLinearGradient(p.x, 0, p.x + pipeWidth, 0);
+    const gradient = ctx.createLinearGradient(
+        p.x, 0, p.x + pipeWidth, 0
+    );
+
     gradient.addColorStop(0, "#ff78b7");
     gradient.addColorStop(0.5, "#ffb4d5");
     gradient.addColorStop(1, "#ed5d9e");
@@ -615,7 +610,6 @@ function drawPipe(p) {
     ctx.strokeRect(p.x - 6, bottomY, pipeWidth + 12, 24);
 
     // NAIFA text
-    ctx.save();
     ctx.fillStyle = "white";
     ctx.font = "bold 15px Trebuchet MS";
     ctx.textAlign = "center";
@@ -628,49 +622,7 @@ function drawPipe(p) {
         ctx.fillText("NAIFA", p.x + pipeWidth / 2, bottomY + 53);
     }
 
-    ctx.restore();
-
-    // Decorations
-    ctx.fillStyle = "#ffdaeb";
-
-    for (let y = 35; y < topHeight - 40; y += 55) {
-        ctx.fillRect(p.x + 12, y, 7, 7);
-    }
-
-    for (let y = bottomY + 85; y < H - 25; y += 55) {
-        ctx.fillRect(p.x + 12, y, 7, 7);
-    }
-}
-
-// PARTICLES
-function makeParticles() {
-    for (let i = 0; i < 10; i++) {
-        particles.push({
-            x: bird.x,
-            y: bird.y,
-            vx: (Math.random() - 0.5) * 4,
-            vy: (Math.random() - 0.5) * 4,
-            life: 30
-        });
-    }
-}
-
-function drawParticles() {
-    particles.forEach(p => {
-        ctx.globalAlpha = p.life / 30;
-        ctx.fillStyle = "#ff70ad";
-
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-        ctx.fill();
-
-        p.x += p.vx;
-        p.y += p.vy;
-        p.life--;
-    });
-
-    particles = particles.filter(p => p.life > 0);
-    ctx.globalAlpha = 1;
+    ctx.textAlign = "left";
 }
 
 // GAME LOGIC
@@ -680,7 +632,6 @@ function resetGame() {
     bird.wing = 0;
 
     pipes = [];
-    particles = [];
 
     score = 0;
     frame = 0;
@@ -703,22 +654,23 @@ function startGame() {
     document.getElementById("pauseScreen").classList.add("hidden");
     document.getElementById("overScreen").classList.add("hidden");
 
-    if (musicOn) startMusic();
-
     flap();
 }
 
 function restartGame() {
     initAudio();
 
+    if (document.getElementById("menuScreen").classList.contains("hidden")) {
+        birdColor = document.getElementById("birdChoice").value;
+        hatType = document.getElementById("hatChoice").value;
+    }
+
     resetGame();
     state = "playing";
 
+    document.getElementById("menuScreen").classList.add("hidden");
     document.getElementById("pauseScreen").classList.add("hidden");
     document.getElementById("overScreen").classList.add("hidden");
-    document.getElementById("menuScreen").classList.add("hidden");
-
-    if (musicOn) startMusic();
 
     flap();
 }
@@ -727,6 +679,7 @@ function pauseGame() {
     if (state !== "playing") return;
 
     state = "paused";
+
     document.getElementById("pauseScreen").classList.remove("hidden");
 }
 
@@ -734,13 +687,12 @@ function resumeGame() {
     if (state !== "paused") return;
 
     state = "playing";
+
     document.getElementById("pauseScreen").classList.add("hidden");
 }
 
 function backToMenu() {
     state = "menu";
-
-    stopMusic();
 
     document.getElementById("overScreen").classList.add("hidden");
     document.getElementById("menuScreen").classList.remove("hidden");
@@ -760,12 +712,12 @@ function gameOver() {
 
     state = "over";
 
-    hitSound();
-    stopMusic();
-
     if (score > best) {
         best = score;
-        localStorage.setItem("naifaBest", best);
+
+        try {
+            localStorage.setItem("naifaBest", best);
+        } catch (e) {}
     }
 
     document.getElementById("best").textContent = best;
@@ -784,88 +736,110 @@ function update() {
     bird.y += bird.velocity;
     bird.wing += 0.25;
 
-    // Spawn pipes
+    // Pipe dibuat berkala
     if (frame % 105 === 0) {
         createPipe();
     }
 
-    // Move pipes
-    pipes.forEach(p => {
+    // Gerakkan pipa
+    for (let i = 0; i < pipes.length; i++) {
+        const p = pipes[i];
+
         p.x -= pipeSpeed;
 
-        // Score
+        // Skor
         if (!p.scored && p.x + pipeWidth < bird.x) {
             p.scored = true;
             score++;
 
             document.getElementById("score").textContent = score;
-            scoreSound();
 
             if (score % 5 === 0) {
-                pipeSpeed = Math.min(4.5, pipeSpeed + 0.2);
+                pipeSpeed = Math.min(4, pipeSpeed + 0.15);
             }
         }
 
         // Collision
-        let bx = bird.x;
-        let by = bird.y;
-        let r = 13;
+        const bx = bird.x;
+        const by = bird.y;
+        const r = 13;
 
-        let horizontal =
-            bx + r > p.x && bx - r < p.x + pipeWidth;
+        const horizontal =
+            bx + r > p.x &&
+            bx - r < p.x + pipeWidth;
 
-        let topHeight = p.gapY - gapSize / 2;
-        let bottomY = p.gapY + gapSize / 2;
+        const topHeight = p.gapY - gapSize / 2;
+        const bottomY = p.gapY + gapSize / 2;
 
-        if (horizontal &&
-            (by - r < topHeight || by + r > bottomY)) {
+        if (
+            horizontal &&
+            (by - r < topHeight || by + r > bottomY)
+        ) {
             gameOver();
+            return;
         }
-    });
+    }
 
-    pipes = pipes.filter(p => p.x > -100);
+    // Hapus pipa yang sudah lewat
+    pipes = pipes.filter(p => p.x > -pipeWidth - 20);
 
-    // Ground / ceiling
+    // Tabrak batas
     if (bird.y + 16 > 575 || bird.y - 16 < 0) {
         gameOver();
     }
-
-    makeParticles();
 }
 
 // DRAW
 function draw() {
     drawBackground();
 
-    pipes.forEach(drawPipe);
-
-    drawParticles();
+    for (let i = 0; i < pipes.length; i++) {
+        drawPipe(pipes[i]);
+    }
 
     drawBird();
 
     if (state === "menu") {
-        ctx.fillStyle = "#ffffff";
+        ctx.fillStyle = "white";
         ctx.font = "bold 18px Trebuchet MS";
         ctx.textAlign = "center";
         ctx.fillText("READY TO FLY? 🎀", 200, 500);
+        ctx.textAlign = "left";
     }
 }
 
-function loop() {
-    update();
+// OPTIMIZED GAME LOOP
+function loop(timestamp) {
+    if (!lastTime) lastTime = timestamp;
+
+    let delta = Math.min(timestamp - lastTime, 100);
+    lastTime = timestamp;
+
+    if (state === "playing") {
+        accumulator += delta;
+
+        while (accumulator >= STEP) {
+            update();
+            accumulator -= STEP;
+
+            if (state !== "playing") break;
+        }
+    } else {
+        accumulator = 0;
+    }
+
     draw();
+
     requestAnimationFrame(loop);
 }
 
-// INPUT
+// INPUT LAPTOP
 document.addEventListener("keydown", e => {
     if (e.code === "Space") {
         e.preventDefault();
 
         if (state === "playing") {
             flap();
-        } else if (state === "menu") {
-            startGame();
         } else if (state === "paused") {
             resumeGame();
         } else if (state === "over") {
@@ -874,16 +848,20 @@ document.addEventListener("keydown", e => {
     }
 });
 
+// INPUT HP
 canvas.addEventListener("pointerdown", e => {
+    e.preventDefault();
+
     if (state === "playing") {
         flap();
     }
 });
 
 // INITIALIZE
-createClouds();
+createBackground();
 resetGame();
-loop();
+
+requestAnimationFrame(loop);
 
 </script>
 
