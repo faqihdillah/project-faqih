@@ -1,0 +1,861 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Flappy Salma 🎀</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Trebuchet MS', sans-serif;
+    background: linear-gradient(135deg,#ffb6d9,#ffdfef);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: #d94d91;
+    touch-action: manipulation;
+}
+
+.game-container {
+    width: min(95vw, 420px);
+    text-align: center;
+}
+
+h1 {
+    font-size: 32px;
+    color: #ec5ca5;
+    text-shadow: 2px 3px white;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    color: #d85b9a;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.game-box {
+    position: relative;
+    width: 100%;
+    border: 6px solid white;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px #d45c9640;
+    background: #ffb9db;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 400 / 600;
+    touch-action: none;
+}
+
+.score-board {
+    position: absolute;
+    top: 12px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.score-item {
+    background: #ffffffdf;
+    padding: 7px 14px;
+    border-radius: 15px;
+    font-weight: bold;
+    color: #e44e9c;
+    font-size: 13px;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: #ffb5d9c9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    padding: 12px;
+}
+
+.panel {
+    background: #fff8fc;
+    width: 92%;
+    padding: 20px 12px;
+    border-radius: 23px;
+    box-shadow: 0 8px 25px #c64b8735;
+}
+
+.panel h2 {
+    font-size: 24px;
+    color: #ed65a9;
+    margin-bottom: 8px;
+}
+
+.panel p {
+    font-size: 12px;
+    margin: 8px 0;
+    color: #b54c81;
+}
+
+button, select {
+    border: none;
+    padding: 10px 14px;
+    margin: 4px;
+    border-radius: 20px;
+    background: #f47eb8;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 12px;
+    box-shadow: 0 3px 0 #d65396;
+    touch-action: manipulation;
+}
+
+button:active {
+    transform: translateY(2px);
+}
+
+.secondary {
+    background: #bda2ed;
+    box-shadow: 0 3px 0 #9272c8;
+}
+
+.light {
+    background: #ffcee5;
+    color: #c34885;
+    box-shadow: 0 3px 0 #e9a4c6;
+}
+
+select {
+    background: #ffe1ef;
+    color: #c34885;
+    box-shadow: none;
+    border: 2px solid #f5b1d0;
+}
+
+.selection {
+    margin: 10px 0;
+}
+
+.selection label {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 9px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.footer {
+    font-size: 10px;
+    margin-top: 8px;
+    color: #c14c85;
+}
+</style>
+</head>
+
+<body>
+
+<div class="game-container">
+
+<h1>🎀 FLAPPY SALMA 🎀</h1>
+<div class="subtitle">Fly high, little princess! 🌈</div>
+
+<div class="game-box">
+
+<canvas id="game" width="400" height="600"></canvas>
+
+<div class="score-board">
+    <div class="score-item">
+        SCORE: <span id="score">0</span>
+    </div>
+    <div class="score-item">
+        BEST: <span id="best">0</span>
+    </div>
+</div>
+
+<div class="overlay" id="menuScreen">
+    <div class="panel">
+        <h2>🌸 Welcome to Salma's Game! 🌸</h2>
+        <p>Bantu burung kecil melewati pipa pink!</p>
+
+        <div class="selection">
+            <label>🐦 PILIH WARNA BURUNG</label>
+            <select id="birdChoice">
+                <option value="#ff72b6">Pink Princess</option>
+                <option value="#fff0a6">Yellow Star</option>
+                <option value="#b9a0ff">Purple Dream</option>
+                <option value="#a3e8ff">Blue Sky</option>
+            </select>
+        </div>
+
+        <div class="selection">
+            <label>🎀 PILIH TOPI</label>
+            <select id="hatChoice">
+                <option value="bow">Pink Bow</option>
+                <option value="crown">Pink Crown</option>
+                <option value="flower">Pink Flower</option>
+                <option value="none">Tanpa Topi</option>
+            </select>
+        </div>
+
+        <button onclick="startGame()">▶ START GAME</button>
+        <p>Tekan SPASI atau sentuh layar untuk terbang!</p>
+    </div>
+</div>
+
+<div class="overlay hidden" id="pauseScreen">
+    <div class="panel">
+        <h2>⏸ GAME PAUSED</h2>
+        <p>Istirahat sebentar!</p>
+        <button onclick="resumeGame()">▶ RESUME</button>
+        <button class="light" onclick="restartGame()">↻ RESTART</button>
+    </div>
+</div>
+
+<div class="overlay hidden" id="overScreen">
+    <div class="panel">
+        <h2>💗 GAME OVER 💗</h2>
+        <p>Ups! Coba lagi ya!</p>
+        <h2 id="finalScore">0</h2>
+        <p>YOUR SCORE</p>
+        <p>🏆 HIGH SCORE: <span id="finalBest">0</span></p>
+        <button onclick="restartGame()">↻ PLAY AGAIN</button>
+        <button class="light" onclick="backToMenu()">MENU</button>
+    </div>
+</div>
+
+</div>
+
+<div class="controls">
+    <button onclick="pauseGame()" class="secondary">⏸ PAUSE</button>
+    <button onclick="restartGame()" class="light">↻ RESTART</button>
+</div>
+
+<div class="footer">
+    Made with 💗 | Flappy Salma
+</div>
+
+</div>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d", { alpha: false });
+
+const W = 400;
+const H = 600;
+
+let state = "menu";
+let score = 0;
+let best = 0;
+
+try {
+    best = Number(localStorage.getItem("flappySalmaBest") || 0);
+} catch (e) {}
+
+document.getElementById("best").textContent = best;
+
+let bird = {
+    x: 95,
+    y: 280,
+    velocity: 0,
+    gravity: 0.38,
+    jump: -7.3,
+    wing: 0
+};
+
+let pipes = [];
+let clouds = [];
+let stars = [];
+
+let pipeSpeed = 2.5;
+let gapSize = 165;
+let pipeWidth = 68;
+
+let frame = 0;
+let lastTime = 0;
+let accumulator = 0;
+
+const STEP = 1000 / 60;
+
+let birdColor = "#ff72b6";
+let hatType = "bow";
+
+// SUARA LOMPAT SAJA
+let audioCtx = null;
+
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (
+            window.AudioContext ||
+            window.webkitAudioContext
+        )();
+    }
+
+    if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+    }
+}
+
+function flapSound() {
+    if (!audioCtx) return;
+
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(650, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(
+        420,
+        audioCtx.currentTime + 0.09
+    );
+
+    gain.gain.setValueAtTime(0.07, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        audioCtx.currentTime + 0.09
+    );
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.09);
+}
+
+// BACKGROUND
+function createBackground() {
+    clouds = [];
+    stars = [];
+
+    for (let i = 0; i < 5; i++) {
+        clouds.push({
+            x: Math.random() * W,
+            y: 60 + Math.random() * 450,
+            size: 20 + Math.random() * 15,
+            speed: 0.3 + Math.random() * 0.3
+        });
+    }
+
+    for (let i = 0; i < 12; i++) {
+        stars.push({
+            x: Math.random() * W,
+            y: Math.random() * 550
+        });
+    }
+}
+
+function drawCloud(x, y, s) {
+    ctx.fillStyle = "white";
+
+    ctx.beginPath();
+    ctx.arc(x, y, s, 0, Math.PI * 2);
+    ctx.arc(x + s, y - 10, s * 0.85, 0, Math.PI * 2);
+    ctx.arc(x + s * 2, y, s, 0, Math.PI * 2);
+    ctx.arc(x + s, y + 8, s * 0.9, 0, Math.PI * 2);
+    ctx.fill();
+}
+
+function drawRainbow() {
+    const colors = [
+        "#ff7eae",
+        "#ffcf76",
+        "#fff18b",
+        "#a7e9a9",
+        "#9fd9ff",
+        "#c6a2ff"
+    ];
+
+    ctx.lineWidth = 8;
+
+    colors.forEach((color, i) => {
+        ctx.strokeStyle = color;
+        ctx.beginPath();
+        ctx.arc(330, 215, 95 - i * 10, Math.PI, Math.PI * 2);
+        ctx.stroke();
+    });
+}
+
+function drawBackground() {
+    const gradient = ctx.createLinearGradient(0, 0, 0, H);
+
+    gradient.addColorStop(0, "#ffb5dc");
+    gradient.addColorStop(1, "#ffe5f2");
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, W, H);
+
+    drawRainbow();
+
+    ctx.fillStyle = "white";
+    ctx.font = "16px Arial";
+
+    for (let i = 0; i < stars.length; i++) {
+        ctx.fillText("✦", stars[i].x, stars[i].y);
+    }
+
+    for (let i = 0; i < clouds.length; i++) {
+        const c = clouds[i];
+
+        drawCloud(c.x, c.y, c.size);
+
+        if (state === "playing") {
+            c.x -= c.speed;
+
+            if (c.x < -100) {
+                c.x = W + 60;
+                c.y = 50 + Math.random() * 460;
+            }
+        }
+    }
+
+    ctx.fillStyle = "#ff9fc9";
+    ctx.fillRect(0, 575, W, 25);
+
+    ctx.fillStyle = "white";
+
+    for (let x = 0; x < W; x += 28) {
+        ctx.fillRect(x, 575, 14, 5);
+    }
+}
+
+// TOPI BURUNG
+function drawHat(x, y) {
+    if (hatType === "none") return;
+
+    ctx.save();
+    ctx.translate(x, y);
+
+    ctx.fillStyle = "#ff4c9e";
+
+    if (hatType === "bow") {
+        ctx.beginPath();
+        ctx.moveTo(-7, -9);
+        ctx.lineTo(-17, -18);
+        ctx.lineTo(-17, -5);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(3, -9);
+        ctx.lineTo(14, -18);
+        ctx.lineTo(14, -5);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = "#ffb3d5";
+        ctx.beginPath();
+        ctx.arc(-2, -10, 4, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    if (hatType === "crown") {
+        ctx.beginPath();
+        ctx.moveTo(-14, -9);
+        ctx.lineTo(-12, -23);
+        ctx.lineTo(-5, -15);
+        ctx.lineTo(0, -25);
+        ctx.lineTo(7, -15);
+        ctx.lineTo(13, -23);
+        ctx.lineTo(14, -9);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    if (hatType === "flower") {
+        for (let i = 0; i < 5; i++) {
+            const a = i * Math.PI * 2 / 5;
+
+            ctx.fillStyle = "#ff70ad";
+            ctx.beginPath();
+
+            ctx.arc(
+                Math.cos(a) * 7,
+                -13 + Math.sin(a) * 7,
+                5, 0, Math.PI * 2
+            );
+
+            ctx.fill();
+        }
+
+        ctx.fillStyle = "#ffe47c";
+        ctx.beginPath();
+        ctx.arc(0, -13, 4, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    ctx.restore();
+}
+
+// BURUNG
+function drawBird() {
+    ctx.save();
+
+    ctx.translate(bird.x, bird.y);
+
+    const angle = Math.max(
+        -0.45,
+        Math.min(0.55, bird.velocity * 0.07)
+    );
+
+    ctx.rotate(angle);
+
+    ctx.fillStyle = birdColor;
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 20, 16, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    const wingY = Math.sin(bird.wing) * 5;
+
+    ctx.fillStyle = "#ff9ac9";
+    ctx.beginPath();
+    ctx.ellipse(-6, wingY, 11, 7, -0.4, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(11, -5, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#51334b";
+    ctx.beginPath();
+    ctx.arc(13, -5, 2.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#ffb34d";
+    ctx.beginPath();
+    ctx.moveTo(18, 0);
+    ctx.lineTo(29, 4);
+    ctx.lineTo(18, 7);
+    ctx.fill();
+
+    ctx.fillStyle = "#ff80ad";
+    ctx.beginPath();
+    ctx.arc(12, 5, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+
+    drawHat(bird.x, bird.y - 9);
+}
+
+// PIPA
+function createPipe() {
+    const gapY = 125 + Math.random() * 300;
+
+    pipes.push({
+        x: W + 10,
+        gapY: gapY,
+        scored: false
+    });
+}
+
+function drawPipe(p) {
+    const topHeight = p.gapY - gapSize / 2;
+    const bottomY = p.gapY + gapSize / 2;
+
+    const gradient = ctx.createLinearGradient(
+        p.x, 0, p.x + pipeWidth, 0
+    );
+
+    gradient.addColorStop(0, "#ff78b7");
+    gradient.addColorStop(0.5, "#ffb4d5");
+    gradient.addColorStop(1, "#ed5d9e");
+
+    ctx.fillStyle = gradient;
+    ctx.strokeStyle = "#e95c9e";
+    ctx.lineWidth = 3;
+
+    ctx.fillRect(p.x, 0, pipeWidth, topHeight);
+    ctx.strokeRect(p.x, -5, pipeWidth, topHeight + 5);
+
+    ctx.fillRect(p.x - 6, topHeight - 24, pipeWidth + 12, 24);
+    ctx.strokeRect(p.x - 6, topHeight - 24, pipeWidth + 12, 24);
+
+    ctx.fillRect(p.x, bottomY, pipeWidth, H - bottomY);
+    ctx.strokeRect(p.x, bottomY, pipeWidth, H - bottomY);
+
+    ctx.fillRect(p.x - 6, bottomY, pipeWidth + 12, 24);
+    ctx.strokeRect(p.x - 6, bottomY, pipeWidth + 12, 24);
+
+    // NAMA SALMA DI PIPA
+    ctx.fillStyle = "white";
+    ctx.font = "bold 12px Arial";
+    ctx.textAlign = "center";
+
+    ctx.fillText(
+        "SALMA",
+        p.x + pipeWidth / 2,
+        topHeight - 8
+    );
+
+    ctx.fillText(
+        "SALMA",
+        p.x + pipeWidth / 2,
+        bottomY + 17
+    );
+
+    ctx.textAlign = "left";
+}
+
+// RESET
+function resetGame() {
+    bird.y = 280;
+    bird.velocity = 0;
+    bird.wing = 0;
+
+    pipes = [];
+
+    score = 0;
+    frame = 0;
+    pipeSpeed = 2.5;
+
+    document.getElementById("score").textContent = 0;
+}
+
+// START
+function startGame() {
+    initAudio();
+
+    birdColor = document.getElementById("birdChoice").value;
+    hatType = document.getElementById("hatChoice").value;
+
+    resetGame();
+    state = "playing";
+
+    document.getElementById("menuScreen").classList.add("hidden");
+    document.getElementById("pauseScreen").classList.add("hidden");
+    document.getElementById("overScreen").classList.add("hidden");
+
+    flap();
+}
+
+function restartGame() {
+    initAudio();
+
+    birdColor = document.getElementById("birdChoice").value;
+    hatType = document.getElementById("hatChoice").value;
+
+    resetGame();
+    state = "playing";
+
+    document.getElementById("menuScreen").classList.add("hidden");
+    document.getElementById("pauseScreen").classList.add("hidden");
+    document.getElementById("overScreen").classList.add("hidden");
+
+    flap();
+}
+
+function pauseGame() {
+    if (state !== "playing") return;
+
+    state = "paused";
+
+    document.getElementById("pauseScreen").classList.remove("hidden");
+}
+
+function resumeGame() {
+    if (state !== "paused") return;
+
+    state = "playing";
+
+    document.getElementById("pauseScreen").classList.add("hidden");
+}
+
+function backToMenu() {
+    state = "menu";
+
+    document.getElementById("overScreen").classList.add("hidden");
+    document.getElementById("menuScreen").classList.remove("hidden");
+}
+
+// LOMPAT
+function flap() {
+    if (state !== "playing") return;
+
+    bird.velocity = bird.jump;
+    bird.wing = 0;
+
+    flapSound();
+}
+
+// GAME OVER
+function gameOver() {
+    if (state !== "playing") return;
+
+    state = "over";
+
+    if (score > best) {
+        best = score;
+
+        try {
+            localStorage.setItem("flappySalmaBest", best);
+        } catch (e) {}
+    }
+
+    document.getElementById("best").textContent = best;
+    document.getElementById("finalScore").textContent = score;
+    document.getElementById("finalBest").textContent = best;
+
+    document.getElementById("overScreen").classList.remove("hidden");
+}
+
+// UPDATE
+function update() {
+    if (state !== "playing") return;
+
+    frame++;
+
+    bird.velocity += bird.gravity;
+    bird.y += bird.velocity;
+    bird.wing += 0.25;
+
+    if (frame % 105 === 0) {
+        createPipe();
+    }
+
+    for (let i = 0; i < pipes.length; i++) {
+        const p = pipes[i];
+
+        p.x -= pipeSpeed;
+
+        if (!p.scored && p.x + pipeWidth < bird.x) {
+            p.scored = true;
+            score++;
+
+            document.getElementById("score").textContent = score;
+
+            if (score % 5 === 0) {
+                pipeSpeed = Math.min(4, pipeSpeed + 0.15);
+            }
+        }
+
+        const bx = bird.x;
+        const by = bird.y;
+        const r = 13;
+
+        const horizontal =
+            bx + r > p.x &&
+            bx - r < p.x + pipeWidth;
+
+        const topHeight = p.gapY - gapSize / 2;
+        const bottomY = p.gapY + gapSize / 2;
+
+        if (
+            horizontal &&
+            (by - r < topHeight || by + r > bottomY)
+        ) {
+            gameOver();
+            return;
+        }
+    }
+
+    pipes = pipes.filter(p => p.x > -pipeWidth - 20);
+
+    if (bird.y + 16 > 575 || bird.y - 16 < 0) {
+        gameOver();
+    }
+}
+
+// GAMBAR GAME
+function draw() {
+    drawBackground();
+
+    for (let i = 0; i < pipes.length; i++) {
+        drawPipe(pipes[i]);
+    }
+
+    drawBird();
+
+    if (state === "menu") {
+        ctx.fillStyle = "white";
+        ctx.font = "bold 18px Trebuchet MS";
+        ctx.textAlign = "center";
+        ctx.fillText("READY TO FLY? 🎀", 200, 500);
+        ctx.textAlign = "left";
+    }
+}
+
+// GAME LOOP
+function loop(timestamp) {
+    if (!lastTime) lastTime = timestamp;
+
+    let delta = Math.min(timestamp - lastTime, 100);
+    lastTime = timestamp;
+
+    if (state === "playing") {
+        accumulator += delta;
+
+        while (accumulator >= STEP) {
+            update();
+            accumulator -= STEP;
+
+            if (state !== "playing") break;
+        }
+    } else {
+        accumulator = 0;
+    }
+
+    draw();
+
+    requestAnimationFrame(loop);
+}
+
+// KEYBOARD LAPTOP
+document.addEventListener("keydown", e => {
+    if (e.code === "Space") {
+        e.preventDefault();
+
+        if (state === "playing") {
+            flap();
+        } else if (state === "paused") {
+            resumeGame();
+        } else if (state === "over") {
+            restartGame();
+        }
+    }
+});
+
+// SENTUHAN HP
+canvas.addEventListener("pointerdown", e => {
+    e.preventDefault();
+
+    if (state === "playing") {
+        flap();
+    }
+});
+
+// JALANKAN GAME
+createBackground();
+resetGame();
+
+requestAnimationFrame(loop);
+
+</script>
+
+</body>
+</html>
+
